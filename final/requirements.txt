@@ -1,8 +1,0 @@
-pandas 
-pyarrow
-duckdb
-pandas
-pyarrow
-streamlit
-plotly
-pydeck

@@ -1,7 +1,8 @@
 pandas 
-numpy 
 pyarrow
 duckdb
-deltalake
+pandas
+pyarrow
 streamlit
 plotly
+pydeck

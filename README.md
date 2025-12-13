@@ -1,4 +1,4 @@
-# Setting up env
+# setting up env
 ```
 python3 -m venv venv
 source venv/bin/activate
@@ -6,29 +6,80 @@ pip install -r requirements.txt
 ```
 
 # The Parquet Enigma
-## Task 1(finding flag)
-```
-cd solutions
-chmod +x flag_parquet.sh
-./parquet.sh --data-dir <path to caspian_hackathon_assets>
-```
-Results(both flag and fixed parquet file) for this challenge will be on processed_data/archive_batch_seismic_readings-parquet
 
-## Loading corrupted parquet files
-Only archive_batch_seismic_readings.parquet file is corrupted.Recovered file is stored on processed_data/recovered-parquet
-How to recover the file?
+Make scripts executable:
 ```
-chmod +x solutions/corrupted_parquet.sh
-solutions/corrupted_parquet.sh --data-dir <path to caspian_hackathon_assets>
+chmod +x solutions/*.sh
+
 ```
 
-## The Ghost Format
-Converted files will be stored in processed_data/sgx_converted
+Run script for getting flag:
 ```
-chmod +x solutions/load_sgx.sh
+solutions/flag_parquet.sh --data-dir <data folder>
+```
+
+flag.txt will be in processed_data/flag
+
+
+Only 1 parquet file is corrupted . For recovery run this script:
+```
+solutions/corrupted_parquet.sh --data-dir <data folder>
+```
+
+Recovered parquet file will be stored in processed_data/recovered-parquet
+
+
+Converted files(from sgx to parquet) will be stored in processed_data/sgx_converted
+For converting:
+```
 solutions/load_sgx.sh --data-dir <path to caspian_hackathon_assets>
 ```
 
-# The path to insight with data modelling
+# Seismic Data Reconstruction & Modeling
+For this part, it is needed to copy required data files to modelling-and-analytics/data folder.
+```
+cp /path/to/caspian_hackathon_assets/*.csv modelling-and-analytics/data
+cp /path/to/caspian_hackathon_assets/track_1_forensics/archive_batch_seismic_readings_2.parquet
+cp /path/to/processed_data/sgx_converted/all_sgx.parquet modelling-and-analytics/data
+cp /path/to/processed_data/recovered-parquet/archive_batch_seismic_readings.parquet modelling-and-analytics/data
 
-## building the raw vault
+```
+
+Run necessary scripts:
+```
+cd modelling-and-analytics
+```
+
+Raw Data Vault ingestion:
+```
+python3 etl/run_track1_raw_vault.py
+```
+
+seismo_raw_vault.duckdb will be created on modelling-and-analytics folder.
+
+Data Quality Tests
+```
+python3 tests/test_raw_vault_validity.py
+```
+
+Building dimensional model:
+```
+python3 etl/build_dimensional_model.py
+```
+
+Building marts:
+```
+python3 etl/build_marts.py
+```
+
+Dashboard:
+```
+streamlit run dashboard/app.py
+```
+
+# The platform
+Docker and docker compose should be installed on the system
+```
+cd modelling-and-analytics
+docker compose up --build
+```
