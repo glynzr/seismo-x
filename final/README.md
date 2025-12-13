@@ -76,3 +76,10 @@ Dashboard:
 ```
 streamlit run dashboard/app.py
 ```
+
+# The platform
+Docker and docker compose should be installed on the system
+```
+cd modelling-and-analytics
+docker compose up --build
+```
