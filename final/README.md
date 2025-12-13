@@ -34,3 +34,45 @@ For converting:
 ```
 solutions/load_sgx.sh --data-dir <path to caspian_hackathon_assets>
 ```
+
+# Seismic Data Reconstruction & Modeling
+For this part, it is needed to copy required data files to modelling-and-analytics/data folder.
+```
+cp /path/to/caspian_hackathon_assets/*.csv modelling-and-analytics/data
+cp /path/to/caspian_hackathon_assets/track_1_forensics/archive_batch_seismic_readings_2.parquet
+cp /path/to/processed_data/sgx_converted/all_sgx.parquet modelling-and-analytics/data
+cp /path/to/processed_data/recovered-parquet/archive_batch_seismic_readings.parquet modelling-and-analytics/data
+
+```
+
+Run necessary scripts:
+```
+cd modelling-and-analytics
+```
+
+Raw Data Vault ingestion:
+```
+python3 etl/run_track1_raw_vault.py
+```
+
+seismo_raw_vault.duckdb will be created on modelling-and-analytics folder.
+
+Data Quality Tests
+```
+python3 tests/test_raw_vault_validity.py
+```
+
+Building dimensional model:
+```
+python3 etl/build_dimensional_model.py
+```
+
+Building marts:
+```
+python3 etl/build_marts.py
+```
+
+Dashboard:
+```
+streamlit run dashboard/app.py
+```

@@ -2,3 +2,5 @@ venv
 caspian_hackathon_assets*
 __pycache__
 processed_data/
+modelling-and-analytics/data/*
+*.duckdb
