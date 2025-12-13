@@ -9,14 +9,14 @@ def main():
     # HUB: well
     con.execute("""
         CREATE OR REPLACE TABLE hub_well AS
-        SELECT
+        SELECT DISTINCT
             well_id,
             ? AS load_timestamp,
             ? AS record_source
         FROM stg_master_wells
     """, [load_ts, record_source])
 
-    # SAT: well details (descriptive attributes + provenance)
+    # SAT: well details (descriptive attributes + provenance + checksum)
     con.execute("""
         CREATE OR REPLACE TABLE sat_well_details AS
         SELECT
@@ -26,6 +26,12 @@ def main():
             location_long,
             operator,
             spud_date,
+            MD5(CONCAT(COALESCE(CAST(well_id AS VARCHAR), ''), '|',
+                       COALESCE(CAST(well_name AS VARCHAR), ''), '|',
+                       COALESCE(CAST(location_lat AS VARCHAR), ''), '|',
+                       COALESCE(CAST(location_long AS VARCHAR), ''), '|',
+                       COALESCE(CAST(operator AS VARCHAR), ''), '|',
+                       COALESCE(CAST(spud_date AS VARCHAR), ''))) AS data_checksum,
             ? AS load_timestamp,
             ? AS record_source
         FROM stg_master_wells
@@ -34,19 +40,21 @@ def main():
     # HUB: survey type
     con.execute("""
         CREATE OR REPLACE TABLE hub_survey_type AS
-        SELECT
+        SELECT DISTINCT
             survey_type_id,
             ? AS load_timestamp,
             ? AS record_source
         FROM stg_master_surveys
     """, [load_ts, record_source])
 
-    # SAT: survey type details
+    # SAT: survey type details with checksum
     con.execute("""
         CREATE OR REPLACE TABLE sat_survey_type_details AS
         SELECT
             survey_type_id,
             survey_type,
+            MD5(CONCAT(COALESCE(CAST(survey_type_id AS VARCHAR), ''), '|',
+                       COALESCE(CAST(survey_type AS VARCHAR), ''))) AS data_checksum,
             ? AS load_timestamp,
             ? AS record_source
         FROM stg_master_surveys

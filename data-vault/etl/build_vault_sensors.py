@@ -10,20 +10,23 @@ def main():
     # HUB: sensor
     con.execute("""
         CREATE OR REPLACE TABLE hub_sensor AS
-        SELECT
+        SELECT DISTINCT
             sensor_id,
             ? AS load_timestamp,
             ? AS record_source
         FROM stg_master_sensors
     """, [load_ts, record_source])
 
-    # SAT: sensor details
+    # SAT: sensor details with checksum
     con.execute("""
         CREATE OR REPLACE TABLE sat_sensor_details AS
         SELECT
             sensor_id,
             sensor_type,
             calibration_date,
+            MD5(CONCAT(COALESCE(CAST(sensor_id AS VARCHAR), ''), '|',
+                       COALESCE(CAST(sensor_type AS VARCHAR), ''), '|',
+                       COALESCE(CAST(calibration_date AS VARCHAR), ''))) AS data_checksum,
             ? AS load_timestamp,
             ? AS record_source
         FROM stg_master_sensors

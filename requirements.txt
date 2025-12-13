@@ -3,3 +3,5 @@ numpy
 pyarrow
 duckdb
 deltalake
+streamlit
+plotly

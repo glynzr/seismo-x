@@ -1,16 +1,18 @@
-# This is a sample Python script.
+"""
+EP2 Seismic Data Reconstruction & Modeling - Main Entry Point
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+This is the main entry point for the EP2 pipeline.
+Run the complete ETL pipeline with: python main.py
+"""
 
+import sys
+from pathlib import Path
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Add project root to path
+project_root = Path(__file__).parent
+sys.path.insert(0, str(project_root))
 
+from etl.run_ep2 import main
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    main()

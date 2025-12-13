@@ -49,7 +49,7 @@ def main():
     """)
 
     # -----------------------
-    # Fact table
+    # Fact table (built from Data Vault)
     # -----------------------
     con.execute("""
         CREATE OR REPLACE TABLE fact_seismic_readings AS
@@ -58,11 +58,14 @@ def main():
             r.sensor_id,
             r.survey_type_id,
             CAST(r.timestamp AS DATE) AS date,
+            r.timestamp,
             r.depth_ft,
             r.amplitude,
             r.quality_flag,
             r.source_file,
-            r.record_source
+            r.record_source,
+            r.load_timestamp,
+            r.data_checksum
         FROM sat_track1_readings r
     """)
 

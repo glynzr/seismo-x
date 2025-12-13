@@ -1,5 +1,7 @@
 import duckdb
 from pathlib import Path
+from deltalake import write_deltalake
+import shutil
 
 def main():
     con = duckdb.connect("warehouse/seismic.duckdb")
@@ -7,6 +9,10 @@ def main():
     # Ensure output folder exists (required by hackathon)
     out_dir = Path("processed_data")
     out_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Delta Lake directory
+    delta_dir = Path("delta_lake")
+    delta_dir.mkdir(parents=True, exist_ok=True)
 
     # -------------------------------
     # mart_well_performance (required)
@@ -49,6 +55,9 @@ def main():
     # -------------------------------
     # mart_survey_summary (required)
     # -------------------------------
+    # Summarizes data acquisition for different survey types.
+    # Counts wells surveyed, total readings, average amplitude, and timestamps,
+    # also breaking down data source formats.
     con.execute("""
         CREATE OR REPLACE TABLE mart_survey_summary AS
         SELECT
@@ -60,39 +69,10 @@ def main():
             AVG(f.amplitude) AS avg_amplitude,
             MIN(f.timestamp) AS first_timestamp,
             MAX(f.timestamp) AS last_timestamp
-        FROM (
-            SELECT
-                well_id, sensor_id, survey_type_id,
-                depth_ft, amplitude, quality_flag,
-                source_file, record_source,
-                CAST(date AS DATE) AS date,
-                -- reconstruct timestamp from sat table via join if needed; but we have timestamp in sat_track1_readings
-                -- so we will join back to sat_track1_readings on keys later if needed.
-                NULL::TIMESTAMP AS timestamp
-            FROM fact_seismic_readings
-        ) f
+        FROM fact_seismic_readings f
         JOIN dim_survey_type st ON f.survey_type_id = st.survey_type_id
         GROUP BY st.survey_type_id, st.survey_type, f.record_source
         ORDER BY st.survey_type_id, f.record_source
-    """)
-
-    # The fact table currently doesn't store timestamp; it stores date only.
-    # For mart_survey_summary we want min/max timestamps, so we rebuild it directly from sat_track1_readings:
-    con.execute("""
-        CREATE OR REPLACE TABLE mart_survey_summary AS
-        SELECT
-            st.survey_type_id,
-            st.survey_type,
-            r.record_source AS data_source_format,
-            COUNT(DISTINCT r.well_id) AS wells_surveyed,
-            COUNT(*) AS total_readings,
-            AVG(r.amplitude) AS avg_amplitude,
-            MIN(r.timestamp) AS first_timestamp,
-            MAX(r.timestamp) AS last_timestamp
-        FROM sat_track1_readings r
-        JOIN dim_survey_type st ON r.survey_type_id = st.survey_type_id
-        GROUP BY st.survey_type_id, st.survey_type, r.record_source
-        ORDER BY st.survey_type_id, r.record_source
     """)
 
     # -------------------------------
@@ -107,6 +87,64 @@ def main():
     print("mart_sensor_analysis rows =", con.execute("SELECT COUNT(*) FROM mart_sensor_analysis").fetchone()[0])
     print("mart_survey_summary rows =", con.execute("SELECT COUNT(*) FROM mart_survey_summary").fetchone()[0])
     print(f"Exported parquet files to: {out_dir.resolve()}")
+
+    # -------------------------------
+    # Export to Delta Lake for time travel (BONUS)
+    # -------------------------------
+    print("\nExporting to Delta Lake for time travel...")
+    
+    # Remove existing Delta Lake tables to avoid schema mismatch errors
+    delta_fact_dir = delta_dir / "fact_seismic_readings"
+    if delta_fact_dir.exists():
+        shutil.rmtree(delta_fact_dir)
+        print(f"  Removed existing fact_seismic_readings Delta table")
+    
+    delta_mwp_dir = delta_dir / "mart_well_performance"
+    if delta_mwp_dir.exists():
+        shutil.rmtree(delta_mwp_dir)
+    
+    delta_msa_dir = delta_dir / "mart_sensor_analysis"
+    if delta_msa_dir.exists():
+        shutil.rmtree(delta_msa_dir)
+    
+    delta_mss_dir = delta_dir / "mart_survey_summary"
+    if delta_mss_dir.exists():
+        shutil.rmtree(delta_mss_dir)
+    
+    # Export fact table to Delta (for time travel)
+    fact_df = con.execute("SELECT * FROM fact_seismic_readings").fetchdf()
+    write_deltalake(
+        str(delta_dir / "fact_seismic_readings"),
+        fact_df,
+        mode="overwrite"
+    )
+    print(f"  ✓ Exported fact_seismic_readings to Delta Lake: {len(fact_df)} rows")
+    
+    # Export marts to Delta Lake
+    mwp_df = con.execute("SELECT * FROM mart_well_performance").fetchdf()
+    write_deltalake(
+        str(delta_dir / "mart_well_performance"),
+        mwp_df,
+        mode="overwrite"
+    )
+    print(f"  ✓ Exported mart_well_performance to Delta Lake: {len(mwp_df)} rows")
+    
+    msa_df = con.execute("SELECT * FROM mart_sensor_analysis").fetchdf()
+    write_deltalake(
+        str(delta_dir / "mart_sensor_analysis"),
+        msa_df,
+        mode="overwrite"
+    )
+    print(f"  ✓ Exported mart_sensor_analysis to Delta Lake: {len(msa_df)} rows")
+    
+    mss_df = con.execute("SELECT * FROM mart_survey_summary").fetchdf()
+    write_deltalake(
+        str(delta_dir / "mart_survey_summary"),
+        mss_df,
+        mode="overwrite"
+    )
+    print(f"  ✓ Exported mart_survey_summary to Delta Lake: {len(mss_df)} rows")
+    print(f"\nDelta Lake tables available at: {delta_dir.resolve()}")
 
     con.close()
 
