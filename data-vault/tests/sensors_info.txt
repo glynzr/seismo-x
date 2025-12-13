@@ -1,0 +1,28 @@
+=== DESCRIBE stg_master_sensors ===
+     column_name column_type null  key default extra
+       sensor_id      BIGINT  YES None    None  None
+     sensor_type     VARCHAR  YES None    None  None
+calibration_date   TIMESTAMP  YES None    None  None
+
+=== SAMPLE stg_master_sensors (20 rows) ===
+ sensor_id   sensor_type calibration_date
+       100 Accelerometer       2011-09-15
+       101 Accelerometer       2011-09-15
+       102 Accelerometer       2011-09-15
+       103      Geophone       2011-09-15
+       104    Hydrophone       2011-09-15
+       105 Accelerometer       2011-09-15
+       106      Geophone       2011-09-15
+       107 Accelerometer       2011-09-15
+       108    Hydrophone       2011-09-15
+       109      Geophone       2011-09-15
+       110      Geophone       2011-09-15
+       111      Geophone       2011-09-15
+       112 Accelerometer       2011-09-15
+       113    Hydrophone       2011-09-15
+       114 Accelerometer       2011-09-15
+       115 Accelerometer       2011-09-15
+       116 Accelerometer       2011-09-15
+       117    Hydrophone       2011-09-15
+       118    Hydrophone       2011-09-15
+       119      Geophone       2011-09-15

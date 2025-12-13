@@ -2,7 +2,7 @@
 ```
 python3 -m venv venv
 source venv/bin/activate
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 # The Parquet Enigma
@@ -24,4 +24,11 @@ solutions/corrupted_parquet.sh --data-dir <path to caspian_hackathon_assets>
 
 ## The Ghost Format
 Converted files will be stored in processed_data/sgx_converted
+```
+chmod +x solutions/load_sgx.sh
+solutions/load_sgx.sh --data-dir <path to caspian_hackathon_assets>
+```
 
+# The path to insight with data modelling
+
+## building the raw vault

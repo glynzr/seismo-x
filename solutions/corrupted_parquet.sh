@@ -36,7 +36,7 @@ echo
 # ------------------ PROCESS FILES ------------------
 find "$DATA_DIR" -type f -name "*.parquet" | while read -r FILE; do
   BASENAME="$(basename "$FILE")"
-  FIXED_FILE="$OUT_DIR/${BASENAME%.parquet}.fixed.parquet"
+  FIXED_FILE="$OUT_DIR/${BASENAME%.parquet}-fixed.parquet"
 
   echo "=============================================="
   echo "[+] Processing:"

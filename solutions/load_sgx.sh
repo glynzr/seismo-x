@@ -4,7 +4,13 @@
 set -e
 
 # Parse arguments
-DATA_DIR="${1:-caspian_hackathon_assets 2}"
+if [[ "${1:-}" != "--data-dir" || -z "${2:-}" ]]; then
+  echo "Usage: $0 --data-dir <directory>"
+  exit 1
+fi
+
+DATA_DIR="$2"
+
 OUTPUT_DIR="processed_data/sgx_converted"
 
 # Create output directory
@@ -20,7 +26,7 @@ import sys
 import os
 sys.path.insert(0, "$PROJECT_ROOT")
 
-from src.recovery.sgx_parser import batch_convert_sgx
+from src.sgx_parser import batch_convert_sgx
 import pandas as pd
 
 data_dir = "$DATA_DIR"
