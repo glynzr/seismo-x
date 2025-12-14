@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seismo-X1 Architecture Diagram</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 0;
+        }
+        .diagram-container {
+            background: white;
+            padding: 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        svg {
+            width: 100%;
+            height: auto;
+        }
+        .box {
+            stroke: #333;
+            stroke-width: 2;
+            rx: 5;
+        }
+        .box-red { fill: #ffcccc; }
+        .box-white { fill: #ffffff; }
+        .box-green { fill: #ccffcc; }
+        .box-light-blue { fill: #cce5ff; }
+        .box-yellow { fill: #ffffcc; }
+        .box-pink { fill: #ffccff; }
+        .box-orange { fill: #ffe5cc; }
+        .box-purple { fill: #e5ccff; }
+        .text {
+            font-size: 12px;
+            font-weight: 500;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+        .text-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .arrow {
+            stroke: #333;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        .arrow-label {
+            font-size: 10px;
+            fill: #666;
+            font-style: italic;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            fill: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="diagram-container">
+        <h1>Seismo-X1 Architecture Diagram</h1>
+        <svg viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Arrow marker definition -->
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" fill="#333" />
+                </marker>
+            </defs>
+
+            <!-- TASK 1: Data Recovery Layer (Top Left) -->
+            <g id="recovery-layer">
+                <text x="50" y="30" class="section-title">I. TASK 1: Data Recovery Layer</text>
+                
+                <!-- Raw Data Sources -->
+                <rect x="20" y="50" width="180" height="60" class="box box-red" />
+                <text x="110" y="70" class="text text-title">Raw Data Sources</text>
+                <text x="110" y="85" class="text">Corrupted .parquet</text>
+                <text x="110" y="100" class="text">Legacy .sgx / CSV</text>
+                
+                <!-- Data Processing Scripts -->
+                <rect x="240" y="50" width="180" height="60" class="box box-white" />
+                <text x="330" y="70" class="text text-title">Data Processing Scripts</text>
+                <text x="330" y="85" class="text">corrupted_parquet.sh</text>
+                <text x="330" y="100" class="text">flag_parquet.sh</text>
+                <text x="330" y="115" class="text">load_sgx.sh</text>
+                
+                <!-- Processing Libraries -->
+                <rect x="240" y="150" width="180" height="80" class="box box-white" />
+                <text x="330" y="170" class="text text-title">Processing Libraries</text>
+                <text x="330" y="185" class="text">src/parquet/</text>
+                <text x="330" y="200" class="text">(forensic.py, recovery.py)</text>
+                <text x="330" y="215" class="text">src/sgx/</text>
+                <text x="330" y="230" class="text">(parser.py, spec.py)</text>
+                
+                <!-- Processed Data -->
+                <rect x="20" y="150" width="180" height="60" class="box box-green" />
+                <text x="110" y="170" class="text text-title">Processed Data</text>
+                <text x="110" y="185" class="text">processed_data/</text>
+                <text x="110" y="200" class="text">recovered-parquet/</text>
+                <text x="110" y="215" class="text">sgx_converted/</text>
+                
+                <!-- Arrows -->
+                <line x1="200" y1="80" x2="240" y2="80" class="arrow" />
+                <text x="220" y="75" class="arrow-label">--data-dir</text>
+                
+                <line x1="330" y1="110" x2="330" y2="150" class="arrow" />
+                <text x="340" y="130" class="arrow-label">uses</text>
+                
+                <line x1="200" y1="180" x2="240" y2="180" class="arrow" />
+                <text x="220" y="175" class="arrow-label">outputs</text>
+                
+                <line x1="110" y1="210" x2="110" y2="280" class="arrow" />
+                <text x="120" y="245" class="arrow-label">feeds</text>
+            </g>
+
+            <!-- TASK 2: Data Modeling Layer (Middle-Left & Bottom-Middle) -->
+            <g id="modeling-layer">
+                <text x="50" y="300" class="section-title">II. TASK 2: Data Modeling Layer</text>
+                
+                <!-- Input Data -->
+                <rect x="20" y="320" width="180" height="50" class="box box-white" />
+                <text x="110" y="340" class="text text-title">Input Data</text>
+                <text x="110" y="355" class="text">modelling-and-analytics/data/</text>
+                
+                <!-- ETL: Raw Data Vault -->
+                <rect x="240" y="320" width="200" height="50" class="box box-light-blue" />
+                <text x="340" y="340" class="text text-title">ETL: Raw Data Vault</text>
+                <text x="340" y="355" class="text">run_track1_raw_vault.py</text>
+                
+                <!-- Data Quality Tests -->
+                <rect x="480" y="320" width="180" height="50" class="box box-yellow" />
+                <text x="570" y="340" class="text text-title">Data Quality Tests</text>
+                <text x="570" y="355" class="text">test_raw_vault_validity.py</text>
+                
+                <!-- ETL: Dimensional Model -->
+                <rect x="700" y="320" width="200" height="50" class="box box-light-blue" />
+                <text x="800" y="340" class="text text-title">ETL: Dimensional Model</text>
+                <text x="800" y="355" class="text">build_dimensional_model.py</text>
+                
+                <!-- ETL: Analytics Marts -->
+                <rect x="940" y="320" width="200" height="50" class="box box-light-blue" />
+                <text x="1040" y="340" class="text text-title">ETL: Analytics Marts</text>
+                <text x="1040" y="355" class="text">build_marts.py</text>
+                
+                <!-- Streamlit Dashboard -->
+                <rect x="1180" y="320" width="180" height="50" class="box box-pink" />
+                <text x="1270" y="340" class="text text-title">Streamlit Dashboard</text>
+                <text x="1270" y="355" class="text">dashboard/app.py</text>
+                
+                <!-- Arrows -->
+                <line x1="200" y1="345" x2="240" y2="345" class="arrow" />
+                <text x="220" y="340" class="arrow-label">ingest</text>
+                
+                <line x1="440" y1="345" x2="480" y2="345" class="arrow" />
+                <text x="460" y="340" class="arrow-label">validate</text>
+                
+                <line x1="660" y1="345" x2="700" y2="345" class="arrow" />
+                <text x="680" y="340" class="arrow-label">transform</text>
+                
+                <line x1="900" y1="345" x2="940" y2="345" class="arrow" />
+                <text x="920" y="340" class="arrow-label">aggregate</text>
+                
+                <line x1="1140" y1="345" x2="1180" y2="345" class="arrow" />
+                <text x="1160" y="340" class="arrow-label">visualize</text>
+            </g>
+
+            <!-- Data Storage Layer (Bottom Left) -->
+            <g id="storage-layer">
+                <text x="50" y="450" class="section-title">III. Data Storage Layer</text>
+                
+                <!-- DuckDB Database -->
+                <rect x="20" y="470" width="200" height="50" class="box box-orange" />
+                <text x="120" y="490" class="text text-title">DuckDB Database</text>
+                <text x="120" y="505" class="text">seismo_raw_vault.duckdb</text>
+                
+                <!-- Schema: stg.* -->
+                <rect x="260" y="470" width="150" height="80" class="box box-white" />
+                <text x="335" y="490" class="text text-title">Schema: stg.*</text>
+                <text x="335" y="505" class="text">Staging Tables</text>
+                <text x="335" y="520" class="text">stg_file_provenance</text>
+                <text x="335" y="535" class="text">stg_master_wells</text>
+                <text x="335" y="550" class="text">stg_archive_readings</text>
+                
+                <!-- Schema: dv.* -->
+                <rect x="450" y="470" width="200" height="120" class="box box-light-blue" />
+                <text x="550" y="490" class="text text-title">Schema: dv.*</text>
+                <text x="550" y="505" class="text">Data Vault</text>
+                <text x="550" y="520" class="text">Hubs, Links, Satellites</text>
+                <text x="550" y="535" class="text">hub_well, hub_sensor</text>
+                <text x="550" y="550" class="text">link_well_sensor_survey</text>
+                <text x="550" y="565" class="text">sat_readings, sat_well_details</text>
+                <text x="550" y="580" class="text">sat_legacy_traces</text>
+                
+                <!-- Schema: dm.* -->
+                <rect x="690" y="470" width="200" height="120" class="box box-white" />
+                <text x="790" y="490" class="text text-title">Schema: dm.*</text>
+                <text x="790" y="505" class="text">Dimensional Model</text>
+                <text x="790" y="520" class="text">Star Schema</text>
+                <text x="790" y="535" class="text">dim_well, dim_sensor</text>
+                <text x="790" y="550" class="text">dim_survey_type, dim_time</text>
+                <text x="790" y="565" class="text">fact_sensor_readings</text>
+                <text x="790" y="580" class="text">fact_anomalies</text>
+                
+                <!-- Schema: mart.* -->
+                <rect x="930" y="470" width="200" height="120" class="box box-white" />
+                <text x="1030" y="490" class="text text-title">Schema: mart.*</text>
+                <text x="1030" y="505" class="text">Analytics Marts</text>
+                <text x="1030" y="520" class="text">mart_well_performance</text>
+                <text x="1030" y="535" class="text">mart_sensor_analysis</text>
+                <text x="1030" y="550" class="text">mart_survey_summary</text>
+                
+                <!-- Arrows between schemas -->
+                <line x1="410" y1="510" x2="450" y2="510" class="arrow" />
+                <text x="430" y="505" class="arrow-label">writes</text>
+                
+                <line x1="410" y1="530" x2="450" y2="530" class="arrow" />
+                <text x="430" y="525" class="arrow-label">reads</text>
+                
+                <line x1="650" y1="530" x2="690" y2="530" class="arrow" />
+                <text x="670" y="525" class="arrow-label">reads</text>
+                
+                <line x1="650" y1="550" x2="690" y2="550" class="arrow" />
+                <text x="670" y="545" class="arrow-label">writes</text>
+                
+                <line x1="890" y1="530" x2="930" y2="530" class="arrow" />
+                <text x="910" y="525" class="arrow-label">reads</text>
+                
+                <line x1="890" y1="550" x2="930" y2="550" class="arrow" />
+                <text x="910" y="545" class="arrow-label">writes</text>
+                
+                <!-- Arrow from ETL to stg -->
+                <line x1="340" y1="370" x2="335" y2="470" class="arrow" />
+                <text x="360" y="420" class="arrow-label">writes</text>
+                
+                <!-- Arrow from ETL to dm -->
+                <line x1="800" y1="370" x2="790" y2="470" class="arrow" />
+                <text x="820" y="420" class="arrow-label">writes</text>
+                
+                <!-- Arrow from ETL to mart -->
+                <line x1="1040" y1="370" x2="1030" y2="470" class="arrow" />
+                <text x="1060" y="420" class="arrow-label">writes</text>
+                
+                <!-- Arrow from mart to dashboard -->
+                <line x1="1030" y1="470" x2="1270" y2="370" class="arrow" />
+                <text x="1150" y="420" class="arrow-label">reads</text>
+            </g>
+
+            <!-- TASK 3: Orchestration Platform (Top Right) -->
+            <g id="orchestration-layer">
+                <text x="1200" y="30" class="section-title">IV. TASK 3: Orchestration Platform</text>
+                
+                <!-- Docker Compose Infrastructure -->
+                <rect x="1180" y="50" width="200" height="60" class="box box-purple" />
+                <text x="1280" y="70" class="text text-title">Docker Compose</text>
+                <text x="1280" y="85" class="text">Infrastructure</text>
+                <text x="1280" y="100" class="text">docker-compose.yml</text>
+                
+                <!-- PostgreSQL -->
+                <rect x="1180" y="150" width="150" height="50" class="box box-white" />
+                <text x="1255" y="170" class="text text-title">PostgreSQL</text>
+                <text x="1255" y="185" class="text">Airflow Metadata</text>
+                
+                <!-- Airflow Webserver -->
+                <rect x="1180" y="230" width="150" height="50" class="box box-white" />
+                <text x="1255" y="250" class="text text-title">Airflow Webserver</text>
+                <text x="1255" y="265" class="text">Port 8080</text>
+                
+                <!-- Airflow Scheduler -->
+                <rect x="1360" y="230" width="150" height="50" class="box box-white" />
+                <text x="1435" y="250" class="text text-title">Airflow Scheduler</text>
+                <text x="1435" y="265" class="text">LocalExecutor</text>
+                
+                <!-- Airflow DAG -->
+                <rect x="1180" y="310" width="200" height="50" class="box box-white" />
+                <text x="1280" y="330" class="text text-title">Airflow DAG</text>
+                <text x="1280" y="345" class="text">seismic_data_pipeline</text>
+                <text x="1280" y="360" class="text">seismic_etl_dag.py</text>
+                
+                <!-- Arrows from Docker Compose -->
+                <line x1="1280" y1="110" x2="1255" y2="150" class="arrow" />
+                <text x="1270" y="130" class="arrow-label">runs</text>
+                
+                <line x1="1280" y1="110" x2="1255" y2="230" class="arrow" />
+                <text x="1270" y="170" class="arrow-label">runs</text>
+                
+                <line x1="1280" y1="110" x2="1435" y2="230" class="arrow" />
+                <text x="1360" y="170" class="arrow-label">runs</text>
+                
+                <!-- Arrow from PostgreSQL to Scheduler -->
+                <line x1="1255" y1="200" x2="1435" y2="255" class="arrow" />
+                <text x="1345" y="230" class="arrow-label">stores state</text>
+                
+                <!-- Arrows from Webserver and Scheduler to DAG -->
+                <line x1="1255" y1="280" x2="1280" y2="310" class="arrow" />
+                <text x="1265" y="295" class="arrow-label">orchestrates</text>
+                
+                <line x1="1435" y1="280" x2="1280" y2="310" class="arrow" />
+                <text x="1360" y="295" class="arrow-label">executes</text>
+                
+                <!-- Arrows from DAG to ETL tasks -->
+                <line x1="1280" y1="360" x2="340" y2="345" class="arrow" />
+                <text x="810" y="360" class="arrow-label">executes</text>
+                
+                <line x1="1280" y1="360" x2="570" y2="345" class="arrow" />
+                <text x="925" y="360" class="arrow-label">executes</text>
+                
+                <line x1="1280" y1="360" x2="800" y2="345" class="arrow" />
+                <text x="1040" y="360" class="arrow-label">executes</text>
+                
+                <line x1="1280" y1="360" x2="1040" y2="345" class="arrow" />
+                <text x="1160" y="360" class="arrow-label">executes</text>
+            </g>
+
+            <!-- Legend -->
+            <g id="legend">
+                <rect x="50" y="650" width="500" height="200" class="box box-white" stroke-dasharray="5,5" />
+                <text x="300" y="670" class="text text-title">Legend</text>
+                
+                <rect x="70" y="690" width="30" height="20" class="box box-red" />
+                <text x="110" y="700" class="text">Raw Data Sources</text>
+                
+                <rect x="70" y="720" width="30" height="20" class="box box-white" />
+                <text x="110" y="730" class="text">Processing Components</text>
+                
+                <rect x="70" y="750" width="30" height="20" class="box box-green" />
+                <text x="110" y="760" class="text">Processed Data</text>
+                
+                <rect x="70" y="780" width="30" height="20" class="box box-light-blue" />
+                <text x="110" y="790" class="text">ETL Processes / Data Vault</text>
+                
+                <rect x="70" y="810" width="30" height="20" class="box box-yellow" />
+                <text x="110" y="820" class="text">Data Quality Tests</text>
+                
+                <rect x="70" y="840" width="30" height="20" class="box box-pink" />
+                <text x="110" y="850" class="text">Visualization</text>
+                
+                <rect x="300" y="690" width="30" height="20" class="box box-orange" />
+                <text x="340" y="700" class="text">Database</text>
+                
+                <rect x="300" y="720" width="30" height="20" class="box box-purple" />
+                <text x="340" y="730" class="text">Infrastructure</text>
+                
+                <line x1="300" y1="760" x2="330" y2="760" class="arrow" />
+                <text x="340" y="765" class="text">Data Flow</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>
