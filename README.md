@@ -81,5 +81,12 @@ streamlit run dashboard/app.py
 Docker and docker compose should be installed on the system
 ```
 cd modelling-and-analytics
-docker compose up --build
+sudo docker compose up --build -d
 ```
+
+Create user on airflow:
+```
+cd modelling-and-analytics
+sudo docker compose exec airflow-webserver airflow users create   --username admin   --password admin   --firstname Admin   --lastname User   --role Admin   --email admin@example.com
+```
+
