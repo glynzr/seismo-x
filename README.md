@@ -236,4 +236,4 @@ For detailed architecture information, see
 ## Final deployment links
 - Airflow dashboard: http://seismoxde-vm-ip.polandcentral.cloudapp.azure.com:8080/
 (login with admin:admin)
-- SeismoX dashboard:  http://seismoxde-vm-ip.polandcentral.cloudapp.azure.com:850
+- SeismoX dashboard:  http://seismoxde-vm-ip.polandcentral.cloudapp.azure.com:8501
