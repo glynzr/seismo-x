@@ -133,8 +133,15 @@ python3 etl/build_marts.py
 ## Dashboard
 
 ```bash
-streamlit run dashboard/app.py
+nohup streamlit run dashboard/app.py \
+  --server.address 0.0.0.0 \
+  --server.port 8501 \
+  > streamlit.log 2>&1 &
+
 ```
+
+Open dashboard on http://<ip>:8501
+
 
 ---
 
@@ -158,6 +165,8 @@ sudo docker compose exec airflow-webserver airflow users create \
 ```
 
 ---
+
+Airflow will be available on http:<ip>:8080 and login after creating user.
 
 ## Output Artifacts Summary
 
