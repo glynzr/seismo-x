@@ -144,7 +144,7 @@ nohup /home/hackathon/seismo-x1/venv/bin/python -m streamlit run dashboard/app.p
 
 ```
 
-Open dashboard on http://<ip>:8501
+Open dashboard on http://IP:8501
 
 
 ---
@@ -170,7 +170,7 @@ sudo docker compose exec airflow-webserver airflow users create \
 
 ---
 
-Airflow will be available on http:<ip>:8080 and login after creating user.
+Airflow will be available on http:IP:8080 and login after creating user.
 
 ## Project Structure
 
@@ -228,4 +228,7 @@ modelling-and-analytics/
 ```
 
 ---
+## Architecture
 
+For detailed architecture information, see  
+[Architecture Diagram & Explanation](ARCHITECTURE_DIAGRAM.md)
