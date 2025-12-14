@@ -109,6 +109,7 @@ seismo_raw_vault.duckdb
 ## Data Quality Tests
 
 ```bash
+cd modelling-and-analytics
 python3 tests/test_raw_vault_validity.py
 ```
 
@@ -117,6 +118,7 @@ python3 tests/test_raw_vault_validity.py
 ## Dimensional Modeling
 
 ```bash
+cd modelling-and-analytics
 python3 etl/build_dimensional_model.py
 ```
 
@@ -125,6 +127,7 @@ python3 etl/build_dimensional_model.py
 ## Building Data Marts
 
 ```bash
+cd modelling-and-analytics
 python3 etl/build_marts.py
 ```
 
@@ -133,9 +136,10 @@ python3 etl/build_marts.py
 ## Dashboard
 
 ```bash
-nohup streamlit run dashboard/app.py \
-  --server.address 0.0.0.0 \
-  --server.port 8501 \
+cd modelling-and-analytics
+nohup /home/hackathon/seismo-x1/venv/bin/python -m streamlit run dashboard/app.py \
+  --server.address=0.0.0.0 \
+  --server.port=8501 \
   > streamlit.log 2>&1 &
 
 ```
