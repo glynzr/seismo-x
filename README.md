@@ -172,6 +172,49 @@ sudo docker compose exec airflow-webserver airflow users create \
 
 Airflow will be available on http:<ip>:8080 and login after creating user.
 
+## Project Structure
+
+```
+seismo-x/
+├── src/                          # Core source code
+│   ├── cli/                      # Command-line tools
+│   │   ├── extract_flag.py      # Extract flags from Parquet files
+│   │   ├── load_sgx.py          # Convert SGX files to Parquet
+│   │   └── recover_parquet.py   # Recover corrupted Parquet files
+│   ├── parquet/                  # Parquet utilities
+│   │   ├── forensic.py          # Forensic analysis tools
+│   │   └── recovery.py          # Parquet recovery logic
+│   └── sgx/                      # SGX format parser
+│       ├── parser.py            # Trace parsing logic
+│       └── spec.py              # SGX format specification
+│
+├── modelling-and-analytics/      # Data warehouse and analytics
+│   ├── airflow/                  # Airflow configuration
+│   │   └── requirements.txt     # Airflow dependencies
+│   ├── dags/                     # Airflow DAGs
+│   │   └── seismic_etl_dag.py  # Main ETL pipeline DAG
+│   ├── etl/                      # ETL scripts
+│   │   ├── run_track1_raw_vault.py      # Raw vault ingestion
+│   │   ├── build_dimensional_model.py   # Dimensional model builder
+│   │   └── build_marts.py               # Data mart builder
+│   ├── dashboard/                # Streamlit dashboard
+│   │   └── app.py               # Main dashboard application
+│   ├── tests/                    # Test suite
+│   │   └── test_raw_vault_validity.py
+│   ├── docker-compose.yml        # Docker Compose configuration
+│   └── Dockerfile               # Airflow Docker image
+│
+├── solutions/                    # Utility scripts
+│   ├── load_sgx.sh             # SGX loading script
+│   ├── recover_parquet.sh      # Parquet recovery script
+│   └── flag_parquet.sh         # Flag extraction script
+│
+├── requirements.txt              # Python dependencies
+├── installation_script.sh        # System setup script
+└── README.md                     # This file
+```
+
+
 ## Output Artifacts Summary
 
 ```
