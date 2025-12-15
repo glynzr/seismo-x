@@ -27,18 +27,7 @@ services:
       - ./seismo_raw_vault.duckdb:/opt/airflow/seismo_raw_vault.duckdb
     ports:
       - "8080:8080"
-    command: >
-      bash -c "
-      airflow db migrate &&
-      airflow users create
-        --username admin
-        --password admin
-        --firstname admin
-        --lastname admin
-        --role Admin
-        --email admin@example.com || true &&
-      airflow webserver
-      "
+
 
   airflow-scheduler:
     build: .
