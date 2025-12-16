@@ -233,7 +233,3 @@ modelling-and-analytics/
 For detailed architecture information, see  
 [Architecture Diagram & Explanation](ARCHITECTURE_DIAGRAM.md)
 
-## Final deployment links
-- Airflow dashboard: http://seismoxde-vm-ip.polandcentral.cloudapp.azure.com:8080/
-(login with admin:admin)
-- SeismoX dashboard:  http://seismoxde-vm-ip.polandcentral.cloudapp.azure.com:8501
